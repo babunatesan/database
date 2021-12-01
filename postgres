@@ -1,0 +1,103 @@
+#schema backup
+---------------------------------------------------------------
+/opt/bitnami/postgresql/bin/pg_dump -U user -d <DBNAME> --schema=<Schemaname> /tmp/schemaname.sql
+
+#table backup
+---------------------------------------------------------------
+/opt/bitnami/postgresql/bin/pg_dump -U user -d <DBNAME> -t <schema.tablename> /tmp/<table.tablename>.sql
+
+#Create table
+---------------------------------------------------------------
+CREATE TABLE <schemaname.tablename> (	ser_unit bigint,	ser_unit_name VARCHAR (255)
+
+#Alter table
+---------------------------------------------------------------
+ALTER TABLE schema.tablename ADD COLUMN account_name character varying(255) COLLATE cg_log."default";
+
+#update
+---------------------------------------------------------------
+UPDATE <Schema.tablename> SET A = 'KHNG' WHERE id = 14;
+
+#To back up one databases
+---------------------------------------------------------------
+pg_dump -U babu {name_of_database} > {name_of_database.sql}
+pg_dump -U <username> {dbname} > dbname.sql
+
+To back up all PostgreSQL databases
+---------------------------------------------------------------
+pg_dumpall > all_pg_dbs.sql
+
+#Restore
+---------------------------------------------------------------
+psql -d database_name -f backup.sql or psql -d {database_name} < backup.sql
+
+#Update password
+---------------------------------------------------------------
+ALTER USER user_name WITH PASSWORD 'new_password';
+
+#Posrtgres readonly user creation
+---------------------------------------------------------------
+I have no name!@postgres:/$ /opt/bitnami/postgresql/bin/psql -U postgres
+Password for user postgres:
+XaGQcURenAp28lfi
+postgres=# create user readonly with password 'XaGQcURenAp28lfi';
+
+postgres=# GRANT CONNECT ON DATABASE xxxxxx TO readonly;
+
+if schema want to readonly 
+---------------------------------------------------------------
+postgres=# GRANT USAGE ON SCHEMA <schemaname> TO readonly;
+
+postgress-13 installation
+---------------------------------------------------------------
+# Install the repository RPM:
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+
+# Install PostgreSQL:
+sudo yum install -y postgresql13-server
+
+# Optionally initialize the database and enable automatic start:
+sudo /usr/pgsql-13/bin/postgresql-13-setup initdb
+sudo systemctl enable postgresql-13
+sudo systemctl start postgresql-13
+sudo -u postgres psql -c "SELECT version();"
+
+sudo su - postgres
+-bash-4.2$
+-bash-4.2$ psql
+psql (13.2)
+Type "help" for help.
+
+postgres=# \q
+
+postgres=# create user boypost with password 'AzVDcRGeqPw29ako';
+CREATE ROLE
+postgres=#
+
+postgres=# ALTER USER boypost CREATEDB;
+
+postgres=# \du
+                                   List of roles
+ Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+ postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+ boypost   | Create DB                                                  | {}
+
+postgres=#\q
+
+[root@postgres-test ~]# sudo vi /var/lib/pgsql/13/data/postgresql.conf
+change the listen_adresses='*' in postgres config
+
+systemctl restart postgresql-13
+
+systemctl status postgresql-13
+
+[root@postgres-test ~]# ss -nlt | grep 5432
+LISTEN     0      128          *:5432                     *:*
+LISTEN     0      128       [::]:5432                  [::]:*
+
+[root@postgres-test ~]# vi /var/lib/pgsql/13/data/pg_hba.conf
+add the below line after host all all md5 entries
+# IPv6 local connections:
+host    all             all             ::1/128                 scram-sha-256
+hostnossl all all 0.0.0.0/0 trust
