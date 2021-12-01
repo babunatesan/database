@@ -1,0 +1,13 @@
+create user in mysql
+======================================
+CREATE USER mysql
+CREATE USER 'normaluser'@'localhost' IDENTIFIED BY 'VEC3gs/2jLtSq3:4';
+========================================================
+see all user in mysql
+SELECT User FROM mysql.user;
+
+password reset for a user;
+SET PASSWORD FOR 'normaluser' = PASSWORD('VEC3gs/2jLtSq3:4');
+
+read only ppermision for a specific user;
+GRANT SELECT ON AI_Inventory_Creation_Prod.* TO 'normaluser'@'%';
