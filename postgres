@@ -1,3 +1,4 @@
+#postgres 11.7.0 version removed from docker image (container image). Upgrading 11.14 will solve the issues.
 #schema backup
 ---------------------------------------------------------------
 /opt/bitnami/postgresql/bin/pg_dump -U user -d <DBNAME> --schema=<Schemaname> /tmp/schemaname.sql
